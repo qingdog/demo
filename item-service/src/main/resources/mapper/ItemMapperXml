@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaoma.item.mapper.ItemMapper">
+
+    <insert id="insertUserList">
+        insert into tb_item
+        (
+        name,
+        title,
+        price,
+        image,
+        category,
+        brand,
+        spec,
+        status,
+        createTime,
+        updateTime
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.name,jdbcType=VARCHAR},
+            #{item.title,jdbcType=VARCHAR},
+            #{item.price,jdbcType=VARCHAR},
+            #{item.image,jdbcType=VARCHAR},
+            #{item.nemtScore,jdbcType=VARCHAR},
+            #{item.category,jdbcType=VARCHAR},
+            #{item.brand,jdbcType=VARCHAR},
+            #{item.spec,jdbcType=VARCHAR},
+            #{item.status,jdbcType=VARCHAR},
+            now(),
+            now()
+            )
+        </foreach>
+    </insert>
+
+
+</mapper>

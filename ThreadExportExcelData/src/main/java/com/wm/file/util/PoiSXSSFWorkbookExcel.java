@@ -36,7 +36,6 @@ public class PoiSXSSFWorkbookExcel {
 
 public static SXSSFWorkbook getSxssfwbExcel(String sheetTitle,String[] title, List<List<String>> result) {
 	SXSSFWorkbook wb = new SXSSFWorkbook();
-
 	//int sheetNum = 0;// 记录额外创建的sheet数量
 	Sheet sheet = wb.createSheet(sheetTitle);
 	// wb.setSheetName(sheetNum, sheetTitle+sheetNum);

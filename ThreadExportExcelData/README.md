@@ -1,4 +1,4 @@
-## 学习多线程使用Callable接口
+## 学习线程池调用Callable实现类
 ```java
 package com.wm.file.service.impl;
 
@@ -41,7 +41,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         int count = total / limit + (total % limit > 0 ? 1 : 0);
         System.out.println("本次任务量: "+count);
 
-        // CountDownLatch闭锁用于计数（count为任务量）
+        // CountDownLatch闭锁用于计数（倒数）（count为任务量）
         CountDownLatch cd = new CountDownLatch(count);
         for (int i = 1; i <= count; i++) {
             // 创建 Callable可调用的实现类 的集合 用于多线程执行
@@ -92,6 +92,76 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     }
 }
 ```
+```java
+package com.wm.file.config;
+
+import org.apache.poi.ss.formula.functions.Na;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+@Configuration
+@EnableAsync // 使用内置的 Spring TaskExecutor 实现了异步任务执行
+public class AsyncTaskPoolConfig {
+
+    @Bean("taskExecutor")
+    public ThreadPoolExecutor taskExecutor() {
+        int i = Runtime.getRuntime().availableProcessors();
+        System.out.println("系统最大线程数：" + i);
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(i,
+                i+1, 5, TimeUnit.SECONDS, new LinkedBlockingDeque<>(),new NamedThreadFactory("execl导出线程池"));
+        System.out.println("execl导出线程池初始化完毕-------------");
+        return threadPoolExecutor;
+    }
+}
+```
+```java
+package com.wm.file.config;
+
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class NamedThreadFactory implements ThreadFactory {
+
+        private final AtomicInteger poolNumber = new AtomicInteger(1);
+
+        private final ThreadGroup threadGroup;
+
+        private final AtomicInteger threadNumber = new AtomicInteger(1);
+
+        public  final String namePrefix;
+
+        NamedThreadFactory(String name){
+            SecurityManager s = System.getSecurityManager();
+            threadGroup = (s != null) ? s.getThreadGroup() :
+                    Thread.currentThread().getThreadGroup();
+            if (null==name || "".equals(name.trim())){
+                name = "pool";
+            }
+            namePrefix = name +"-"+
+                    poolNumber.getAndIncrement() +
+                    "-thread-";
+        }
+
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(threadGroup, r,
+                    namePrefix + threadNumber.getAndIncrement(),
+                    0);
+            if (t.isDaemon())
+                t.setDaemon(false);
+            if (t.getPriority() != Thread.NORM_PRIORITY)
+                t.setPriority(Thread.NORM_PRIORITY);
+            return t;
+        }
+    }
+```
 ## org.apache.poi.xssf.streaming.SXSSFWorkbook处理大数据导出
 ```java
 class anonymous{
@@ -105,6 +175,24 @@ class anonymous{
   }
 }
 
+```
+## 存储过程
+```sql
+DELIMITER //
+DROP PROCEDURE if EXISTS ‘test’;    # 如果存在test存储过程则删除
+CREATE procedure test() # 创建无参存储过程，名称为test
+BEGIN
+  DECLARE i INT;  # 申明变量
+  SET i = 0;  # 变量赋值
+  WHILE i<100 DO # 结束循环的条件: 当i大于5时跳出while循环
+    INSERT INTO user(name) VALUES(i);  # 往test表添加数据
+    SET i = i+1;    # 循环一次,i加1
+  END WHILE;  # 结束while循环
+  SELECT * FROM user; # 查看test表数据
+END
+//  # 结束定义语句
+DELIMITER ; # 重新将分隔符设置为;
+CALL test();    # 调用存储过程
 ```
 
 # 多线程实现百万级数据导出到excel
