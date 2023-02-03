@@ -1,4 +1,4 @@
-# 学习多线程使用Callable接口
+## 学习多线程使用Callable接口
 ```java
 package com.wm.file.service.impl;
 
@@ -92,8 +92,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     }
 }
 ```
+## org.apache.poi.xssf.streaming.SXSSFWorkbook处理大数据导出
+```java
+class anonymous{
+  public void  writeHugeExcelTest(){
+    SXSSFWorkbook wb = new SXSSFWorkbook(); // 默认100行超过写入到临时文件
+    try{
+      wb.setCompressTempFiles(false);//是否压缩临时文件，否则写入速度更快，但更占磁盘
+    }finally {
+      wb.dispose();//删除临时文件
+    }
+  }
+}
 
-
+```
 
 # 多线程实现百万级数据导出到excel
 
