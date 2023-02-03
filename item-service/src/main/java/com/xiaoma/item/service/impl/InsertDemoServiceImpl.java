@@ -140,8 +140,9 @@ public class InsertDemoServiceImpl {
         }
         int nThreads = 20;
         CountDownLatch childMonitor = new CountDownLatch(nThreads);
-
+        // 新增同步集合（保存执行结果）
         List<Boolean> childResponse = Collections.synchronizedList(new ArrayList<Boolean>());
+        // 子线程等待主线程的通知
         CountDownLatch mainMonitor = new CountDownLatch(1);
 
 
@@ -170,21 +171,13 @@ public class InsertDemoServiceImpl {
                     childResponse.add(Boolean.TRUE);
                     childMonitor.countDown();
                     log.info("线程{}正常执行完成，等待其他线程执行结果",Thread.currentThread().getName());
-
-                    try {
-                        // 主线程等待
-                        mainMonitor.await();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-
+                    // 主线程阻塞，切换到子线程，看所有子线程执行到这一行后，再会继续向下执行（闭锁childMonitor为0）
+                    mainMonitor.await();
                     if (IS_OK) {
                         transactionalUtil.commit(tranction);
                     } else {
                         transactionalUtil.rollback(tranction);
                     }
-
-
 
                 } catch (Exception e) {
                     childResponse.add(Boolean.FALSE);
@@ -193,21 +186,24 @@ public class InsertDemoServiceImpl {
                     log.error("回滚");
                     transactionalUtil.rollback(tranction);
                 }
-
-
-                transactionalUtil.commit(tranction);
             });
         }
 
-        childMonitor.await();
-        for(Boolean resp: childResponse){
-            if(!resp){
-                log.info("执行失败，标记");
-                IS_OK = false;
-                break;
+        try{
+            // 子线程等待，先让主线程记录所有子线程执行结果
+            childMonitor.await();
+            for(Boolean resp: childResponse){
+                if(!resp){
+                    log.info("执行失败，标记");
+                    IS_OK = false;
+                    break;
+                }
             }
+            // 记录结果完毕，继续从等待处执行。让子线程根据主线程中保存的结果 执行提交或回滚
+            mainMonitor.countDown();
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        mainMonitor.countDown();
 
         executorService.shutdown();
     }

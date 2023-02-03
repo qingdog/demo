@@ -4,14 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="396b6919-17c8-4dc6-88b3-d3e7b59c1c01" name="变更" comment="">
-      <change afterPath="$PROJECT_DIR$/../caffeinedemo/.idea/caffeinedemo.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../item-service/.idea/item-service.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../item-service/item-service.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/wm/file/util/PoiSXSSFWorkbookExcel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/wm/file/util/PoiSXSSFWorkbookExcel.java" afterDir="false" />
-    </list>
+    <list default="true" id="396b6919-17c8-4dc6-88b3-d3e7b59c1c01" name="变更" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -83,7 +76,7 @@
       <workItem from="1675350048018" duration="1605000" />
       <workItem from="1675387643161" duration="1494000" />
       <workItem from="1675391617602" duration="228000" />
-      <workItem from="1675392567017" duration="3816000" />
+      <workItem from="1675392567017" duration="3820000" />
     </task>
     <servers />
   </component>
